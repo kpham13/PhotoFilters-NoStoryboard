@@ -11,15 +11,19 @@ import UIKit
 class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
   let rootView = UIView(frame: UIScreen.mainScreen().bounds)
-  let photoButton = UIButton()
+  let imageView = UIImageView()
+  let actionsButton = UIButton()
   
   override func loadView() {
     self.rootView.backgroundColor = UIColor.whiteColor()
-    self.setupPhotoButton()
+    self.setupActionsButton()
+    self.setupImageView()
     
-    // Photo Button Autolayout
-    let views = ["photoButton" : self.photoButton]
+    // Actions Button Autolayout
+    let views = ["actionsButton" : self.actionsButton]
     self.setupConstraintsOnRootView(rootView, forViews: views)
+    
+    // Apple recommends this to be last in loadView
     self.view = rootView
   }
   
@@ -34,7 +38,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   
   // MARK: - NAVIGATION
   
-  func photoButtonPressed(sender: UIButton) {
+  func actionsButtonPressed(sender: UIButton) {
     let alertController = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
     
     let filterAction = UIAlertAction(title: "Filter", style: .Default) { (action) -> Void in
@@ -84,32 +88,37 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   // MARK: - AUTO LAYOUT
   
   func setupConstraintsOnRootView(rootView: UIView, forViews views: [String : AnyObject]) {
-    let photoButtonConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:[photoButton]-20-|",
+    let actionsButtonConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:[actionsButton]-20-|",
                                                                                   options: nil,
                                                                                   metrics: nil,
                                                                                     views: views)
+    self.rootView.addConstraints(actionsButtonConstraintVertical)
     
-    self.rootView.addConstraints(photoButtonConstraintVertical)
-    let photoButton = views["photoButton"] as UIView!
-    let photoButtonConstraintHorizontal = NSLayoutConstraint(item: photoButton,
+    let actionsButton = views["actionsButton"] as UIView!
+    let actionsButtonConstraintHorizontal = NSLayoutConstraint(item: actionsButton,
                                                         attribute: .CenterX,
                                                         relatedBy: NSLayoutRelation.Equal,
                                                            toItem: rootView,
                                                         attribute: NSLayoutAttribute.CenterX,
                                                        multiplier: 1.0,
                                                          constant: 0.0)
-    
-    self.rootView.addConstraint(photoButtonConstraintHorizontal)
+    self.rootView.addConstraint(actionsButtonConstraintHorizontal)
   }
   
   // MARK: - SETUP
   
-  func setupPhotoButton() {
-    self.photoButton.setTranslatesAutoresizingMaskIntoConstraints(false)
-    self.photoButton.setTitle("Photos", forState: .Normal)
-    self.photoButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
-    self.photoButton.addTarget(self, action: "photoButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
-    self.rootView.addSubview(self.photoButton)
+  func setupActionsButton() {
+    self.actionsButton.setTranslatesAutoresizingMaskIntoConstraints(false)
+    self.actionsButton.setTitle("Actions", forState: .Normal)
+    self.actionsButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
+    self.actionsButton.addTarget(self, action: "actionsButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+    self.rootView.addSubview(self.actionsButton)
+  }
+  
+  func setupImageView() {
+    self.imageView.frame = CGRectMake(0, 0, 200, 200)
+    self.imageView.backgroundColor = UIColor.blueColor()
+    self.rootView.addSubview(self.imageView)
   }
   
 }

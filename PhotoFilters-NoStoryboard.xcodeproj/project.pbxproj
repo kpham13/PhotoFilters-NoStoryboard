@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0AC94BDA1A6482070004916F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BD91A6482070004916F /* AppDelegate.swift */; };
 		0AC94BDD1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BDB1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodeld */; };
-		0AC94BDF1A6482070004916F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BDE1A6482070004916F /* ViewController.swift */; };
+		0AC94BDF1A6482070004916F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BDE1A6482070004916F /* HomeViewController.swift */; };
 		0AC94BE41A6482070004916F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AC94BE31A6482070004916F /* Images.xcassets */; };
 		0AC94BE71A6482070004916F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AC94BE51A6482070004916F /* LaunchScreen.xib */; };
 		0AC94BF31A6482080004916F /* PhotoFilters_NoStoryboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BF21A6482080004916F /* PhotoFilters_NoStoryboardTests.swift */; };
@@ -31,7 +31,7 @@
 		0AC94BD81A6482070004916F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AC94BD91A6482070004916F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AC94BDC1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PhotoFilters_NoStoryboard.xcdatamodel; sourceTree = "<group>"; };
-		0AC94BDE1A6482070004916F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0AC94BDE1A6482070004916F /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		0AC94BE31A6482070004916F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0AC94BE61A6482070004916F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		0AC94BEC1A6482080004916F /* PhotoFilters-NoStoryboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PhotoFilters-NoStoryboardTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,7 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				0AC94BFF1A6491F30004916F /* GalleryViewController.swift */,
-				0AC94BDE1A6482070004916F /* ViewController.swift */,
+				0AC94BDE1A6482070004916F /* HomeViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0AC94BDF1A6482070004916F /* ViewController.swift in Sources */,
+				0AC94BDF1A6482070004916F /* HomeViewController.swift in Sources */,
 				0AC94C001A6491F30004916F /* GalleryViewController.swift in Sources */,
 				0AC94BDD1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodeld in Sources */,
 				0AC94BDA1A6482070004916F /* AppDelegate.swift in Sources */,
@@ -425,6 +425,7 @@
 				0AC94BF81A6482080004916F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0AC94BF91A6482080004916F /* Build configuration list for PBXNativeTarget "PhotoFilters-NoStoryboardTests" */ = {
 			isa = XCConfigurationList;
@@ -433,6 +434,7 @@
 				0AC94BFB1A6482080004916F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

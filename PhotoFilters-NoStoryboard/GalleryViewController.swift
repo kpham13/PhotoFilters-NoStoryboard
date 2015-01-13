@@ -30,11 +30,6 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
   override func viewDidLoad() {
     super.viewDidLoad()
     self.collectionView.registerClass(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "GALLERY_CELL")
-    
-    let image1 = UIImage(named: "unsplash_1.jpg")
-    let image2 = UIImage(named: "unsplash_2.jpg")
-    self.images.append(image1!)
-    self.images.append(image2!)
   }
   
   override func didReceiveMemoryWarning() {
@@ -63,4 +58,21 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     self.navigationController?.popViewControllerAnimated(true)
   }
 
+  // MARK: - SETUP
+  
+  func addImages() {
+    for imageIndex in 1...14 {
+      let size = CGSize(width: 100, height: 100)
+      var image = UIImage(named: "unsplash_\(imageIndex).jpg")
+      
+      self.images.append(image!)
+      
+//      UIGraphicsBeginImageContext(size)
+//      image?.drawInRect(CGRect(x: 0, y: 0, width: 100, height: 100))
+//      image = UIGraphicsGetImageFromCurrentImageContext()
+//      UIGraphicsEndImageContext()
+//      self.thumbnails.append(image)
+    }
+  }
+  
 }

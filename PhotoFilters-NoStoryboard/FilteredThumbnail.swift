@@ -17,6 +17,8 @@ class FilteredThumbnail {
   var imageQueue : NSOperationQueue
   //var filter = CIFilter?
   
+  //init(name : String, thumbnail : UIImage, queue : NSOperationQueue, context : CIContext)
+  
   init(filterName: String, context: CIContext, operationQueue: NSOperationQueue) {
     self.filterName = filterName
     self.gpuContext = context
@@ -32,6 +34,10 @@ class FilteredThumbnail {
     let extent = result.extent()
     let imageRef = self.gpuContext.createCGImage(result, fromRect: extent)
     self.filteredImage = UIImage(CGImage: imageRef)
+    
+    NSOperationQueue.mainQueue().addOperationWithBlock { () -> Void in
+      completionHandler(image: self.filteredImage!)
+    }
   }
   
 }

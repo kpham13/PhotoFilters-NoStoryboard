@@ -11,29 +11,33 @@ import UIKit
 class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
 
   let rootView = UIView(frame: UIScreen.mainScreen().bounds)
-  let collectionView = UICollectionView()
+  var collectionView : UICollectionView!
+  var collectionViewYConstraint : NSLayoutConstraint!
   let imageView = UIImageView()
   let actionsButton = UIButton()
-  //var thumbnails = [Thumbnails]()
+  var thumbnails = [FilteredThumbnail]()
   
   override func loadView() {
     self.rootView.backgroundColor = UIColor.whiteColor()
-    self.setupImageView()
     self.setupActionsButton()
+    self.setupImageView()
+    self.setupCollectionView()
     
-    // Actions Button Auto Layout
-    let views = ["actionsButton" : self.actionsButton]
-    self.setupConstraintsOnRootView(rootView, forViews: views)
+    // Auto Layout
+    let views = ["actionsButton" : self.actionsButton, "imageView" : self.imageView, "collectionView" : self.collectionView]
+    self.setupConstraintsOnRootView(self.rootView, forViews: views)
+    self.setupConstraintsOnCollectionView(self.rootView, forViews: views)
     
     self.collectionView.dataSource = self
     self.collectionView.delegate = self
     
     // Apple recommends this to be last in loadView
-    self.view = rootView
+    self.view = self.rootView
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.collectionView.registerClass(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "FILTER_CELL")
   }
 
   override func didReceiveMemoryWarning() {
@@ -44,13 +48,20 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   // MARK: - COLLECTION VIEW DATA SOURCE
   
   func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return 3
+    return self.thumbnails.count
   }
   
   func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
     let cell = self.collectionView.dequeueReusableCellWithReuseIdentifier("FILTER_CELL", forIndexPath: indexPath) as GalleryCollectionViewCell
     
-    
+    let thumbnail = self.thumbnails[indexPath.row]
+    if thumbnail.originalImage != nil {
+      if thumbnail.filteredImage == nil {
+        thumbnail.generateThumbnail({ (image) -> (Void) in
+          cell.imageView.image = thumbnail.filteredImage!
+        })
+      }
+    }
     
     return cell
   }
@@ -63,6 +74,10 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     let filterAction = UIAlertAction(title: "Filter", style: .Default) { (action) -> Void in
       //self.enterFilterMode()
       println("Enter Filter Mode")
+      self.collectionViewYConstraint.constant = 20
+      UIView.animateWithDuration(0.4, animations: { () -> Void in
+        self.view.setNeedsLayout()
+      })
     }
     let avfAction = UIAlertAction(title: "AVF Camera", style: .Default) { (action) -> Void in
       //self.performSegueWithIdentifier("SHOW_AVF", sender: self)
@@ -108,28 +123,56 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   
   func setupConstraintsOnRootView(rootView: UIView, forViews views: [String : AnyObject]) {
     let actionsButtonConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:[actionsButton]-20-|",
+                                                                                 options: nil,
+                                                                                 metrics: nil,
+                                                                                   views: views)
+    rootView.addConstraints(actionsButtonConstraintVertical)
+    let actionsButton = views["actionsButton"] as UIView!
+    let actionsButtonConstraintHorizontal = NSLayoutConstraint(item: actionsButton,
+                                                          attribute: .CenterX,
+                                                          relatedBy: NSLayoutRelation.Equal,
+                                                             toItem: rootView,
+                                                          attribute: NSLayoutAttribute.CenterX,
+                                                         multiplier: 1.0,
+                                                           constant: 0.0)
+    rootView.addConstraint(actionsButtonConstraintHorizontal)
+    let imageViewConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:|-72-[imageView]-30-[actionsButton]",
+                                                                             options: nil,
+                                                                             metrics: nil,
+                                                                               views: views)
+    rootView.addConstraints(imageViewConstraintVertical)
+    let imageViewConstraintHorizontal = NSLayoutConstraint.constraintsWithVisualFormat("H:|-[imageView]-|",
+                                                                               options: nil,
+                                                                               metrics: nil,
+                                                                                 views: views)
+    rootView.addConstraints(imageViewConstraintHorizontal)
+  }
+  
+  func setupConstraintsOnCollectionView(rootView: UIView, forViews views: [String : AnyObject]) {
+    let collectionViewConstraintHeight = NSLayoutConstraint.constraintsWithVisualFormat("V:[collectionView(100)]",
+                                                                                options: nil,
+                                                                                metrics: nil,
+                                                                                  views: views)
+    self.collectionView.addConstraints(collectionViewConstraintHeight)
+    let collectionViewConstraintHorizontal = NSLayoutConstraint.constraintsWithVisualFormat("H:|[collectionView]|",
+                                                                                    options: nil,
+                                                                                    metrics: nil,
+                                                                                      views: views)
+    rootView.addConstraints(collectionViewConstraintHorizontal)
+    let collectionViewConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:[collectionView]-(-120)-|",
                                                                                   options: nil,
                                                                                   metrics: nil,
                                                                                     views: views)
-    self.rootView.addConstraints(actionsButtonConstraintVertical)
-    
-    let actionsButton = views["actionsButton"] as UIView!
-    let actionsButtonConstraintHorizontal = NSLayoutConstraint(item: actionsButton,
-                                                        attribute: .CenterX,
-                                                        relatedBy: NSLayoutRelation.Equal,
-                                                           toItem: rootView,
-                                                        attribute: NSLayoutAttribute.CenterX,
-                                                       multiplier: 1.0,
-                                                         constant: 0.0)
-    self.rootView.addConstraint(actionsButtonConstraintHorizontal)
+    rootView.addConstraints(collectionViewConstraintVertical)
+    self.collectionViewYConstraint = collectionViewConstraintVertical.first as NSLayoutConstraint
   }
   
   // MARK: - SETUP
   
   func setupActionsButton() {
-    self.actionsButton.setTranslatesAutoresizingMaskIntoConstraints(false)
     self.actionsButton.setTitle("Actions", forState: .Normal)
-    self.actionsButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
+    self.actionsButton.setTitleColor(UIColor.blueColor(), forState: .Normal)
+    self.actionsButton.setTranslatesAutoresizingMaskIntoConstraints(false)
     self.actionsButton.addTarget(self, action: "actionsButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
     self.rootView.addSubview(self.actionsButton)
   }
@@ -137,7 +180,18 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   func setupImageView() {
     self.imageView.frame = CGRectMake(0, 0, 200, 200)
     self.imageView.backgroundColor = UIColor.blueColor()
+    self.imageView.setTranslatesAutoresizingMaskIntoConstraints(false)
     self.rootView.addSubview(self.imageView)
+  }
+  
+  func setupCollectionView() {
+    let collectionViewFlowLayout = UICollectionViewFlowLayout()
+    self.collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: collectionViewFlowLayout)
+    //self.collectionView.backgroundColor = UIColor.whiteColor()
+    self.collectionView.setTranslatesAutoresizingMaskIntoConstraints(false)
+    collectionViewFlowLayout.itemSize = CGSize(width: 100, height: 100)
+    collectionViewFlowLayout.scrollDirection = .Horizontal
+    self.rootView.addSubview(self.collectionView)
   }
   
 }

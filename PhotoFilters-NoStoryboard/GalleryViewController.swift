@@ -29,9 +29,8 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    println("Gallery VC launched")
     self.collectionView.registerClass(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: "GALLERY_CELL")
-    //Append images
+    
     let image1 = UIImage(named: "unsplash_1.jpg")
     let image2 = UIImage(named: "unsplash_2.jpg")
     self.images.append(image1!)

@@ -8,20 +8,25 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
 
   let rootView = UIView(frame: UIScreen.mainScreen().bounds)
+  let collectionView = UICollectionView()
   let imageView = UIImageView()
   let actionsButton = UIButton()
+  //var thumbnails = [Thumbnails]()
   
   override func loadView() {
     self.rootView.backgroundColor = UIColor.whiteColor()
-    self.setupActionsButton()
     self.setupImageView()
+    self.setupActionsButton()
     
-    // Actions Button Autolayout
+    // Actions Button Auto Layout
     let views = ["actionsButton" : self.actionsButton]
     self.setupConstraintsOnRootView(rootView, forViews: views)
+    
+    self.collectionView.dataSource = self
+    self.collectionView.delegate = self
     
     // Apple recommends this to be last in loadView
     self.view = rootView
@@ -34,6 +39,20 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+  
+  // MARK: - COLLECTION VIEW DATA SOURCE
+  
+  func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    return 3
+  }
+  
+  func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    let cell = self.collectionView.dequeueReusableCellWithReuseIdentifier("FILTER_CELL", forIndexPath: indexPath) as GalleryCollectionViewCell
+    
+    
+    
+    return cell
   }
   
   // MARK: - NAVIGATION

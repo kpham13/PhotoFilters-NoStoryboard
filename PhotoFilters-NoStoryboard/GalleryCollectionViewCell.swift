@@ -9,6 +9,7 @@
 import UIKit
 
 class GalleryCollectionViewCell: UICollectionViewCell {
+  
   let imageView = UIImageView()
   
   override init(frame: CGRect) {

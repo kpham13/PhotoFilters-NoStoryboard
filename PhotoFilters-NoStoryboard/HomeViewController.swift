@@ -19,7 +19,11 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   var collectionView : UICollectionView!
   var collectionViewYConstraint : NSLayoutConstraint!
   let imageView = UIImageView()
+  var imageViewHeightConstraint : NSLayoutConstraint!
+  var imageViewWidthConstraint : NSLayoutConstraint!
   let actionsButton = UIButton()
+  var composeButton : UIBarButtonItem!
+  var cancelButton : UIBarButtonItem!
   var gpuContext : CIContext!
   var currentImage : UIImage?
   var originalThumbnail : UIImage?
@@ -37,7 +41,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     // Auto Layout
     let views = ["actionsButton" : self.actionsButton, "imageView" : self.imageView, "collectionView" : self.collectionView]
     self.setupConstraintsOnRootView(self.rootView, forViews: views)
-    self.setupConstraintsOnCollectionView(self.rootView, forViews: views)
     
     self.collectionView.dataSource = self
     self.collectionView.delegate = self
@@ -54,7 +57,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     self.fetchFilters()
     self.resetFilterThumbnails()
   }
-
+  
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
@@ -96,6 +99,19 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     self.thumbnails = newFilters
   }
   
+  func applyFilter(thumbnail: FilteredThumbnail) {
+    var image = CIImage(image: self.currentImage)
+    var imageFilter = CIFilter(name: thumbnail.filterName)
+    imageFilter.setDefaults()
+    imageFilter.setValue(image, forKey: kCIInputImageKey)
+    
+    var result = imageFilter.valueForKey(kCIOutputImageKey) as CIImage
+    var extent = result.extent()
+    var imageRef = self.gpuContext.createCGImage(result, fromRect: extent)
+    var filteredImage = UIImage(CGImage: imageRef!)
+    self.imageView.image = filteredImage
+  }
+  
   func revertFilter() {
     self.imageView.image = self.currentImage
     self.navigationItem.leftBarButtonItem = nil
@@ -127,7 +143,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     self.currentImage = image
     self.imageView.image = image
     self.generateThumbnail()
-    //self.resetFilterThumbnails()
+    self.resetFilterThumbnails()
     self.collectionView.reloadData()
     self.dismissViewControllerAnimated(true, completion: nil)
   }
@@ -152,13 +168,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         }
       })
     }
-//    if thumbnail.originalImage != nil {
-//      if thumbnail.filteredImage == nil {
-//        thumbnail.generateThumbnail({ (image) -> (Void) in
-//          cell.imageView.image = thumbnail.filteredImage!
-//        })
-//      }
-//    }
     
     return cell
   }
@@ -166,22 +175,11 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   // MARK: - COLLECTION VIEW DELEGATE
   
   func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-    //
-//    var filterThumbnail = self.filterThumbnails[indexPath.row]
-//    var filteredImage = UIImage()
-//    var image = CIImage(image: self.currentImage)
-//    var imageFilter = CIFilter(name: filterThumbnail.filterName)
-//    imageFilter.setDefaults()
-//    imageFilter.setValue(image, forKey: kCIInputImageKey)
-//    
-//    var result = imageFilter.valueForKey(kCIOutputImageKey) as CIImage
-//    var extent = result.extent()
-//    var imageRef = self.context?.createCGImage(result, fromRect: extent)
-//    filteredImage = UIImage(CGImage: imageRef)
-//    self.imageView.image = filteredImage
-//    
-//    self.hasChanged = true
-//    self.exitFilterMode()
+    var filteredThumbnail = self.thumbnails[indexPath.row]
+    self.applyFilter(filteredThumbnail)
+    
+    self.hasChanged = true
+    self.exitFilterMode()
   }
   
   // MARK: - NAVIGATION
@@ -234,38 +232,42 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   // MARK: - ANIMATION
   
   func enterFilterMode() {
+    self.imageViewHeightConstraint.constant = self.imageViewHeightConstraint.constant * 0.9
+    self.imageViewWidthConstraint.constant = self.imageViewWidthConstraint.constant * 0.9
     self.collectionViewYConstraint.constant = 50 //20
     UIView.animateWithDuration(0.4, animations: { () -> Void in
       self.view.layoutIfNeeded()
     })
     
-    let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "exitFilterMode")
-    self.navigationItem.leftBarButtonItem = cancelButton
+    cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "exitFilterMode")
+    self.navigationItem.leftBarButtonItem = self.cancelButton
     self.navigationItem.rightBarButtonItem = nil
     self.actionsButton.hidden = true
   }
   
   func exitFilterMode() {
+    self.imageViewHeightConstraint.constant = self.imageViewHeightConstraint.constant / 0.9
+    self.imageViewWidthConstraint.constant = self.imageViewWidthConstraint.constant / 0.9
     self.collectionViewYConstraint.constant = -120
     UIView.animateWithDuration(0.4, animations: { () -> Void in
       self.view.layoutIfNeeded()
     })
     
-      //    if self.hasChanged == true {
-      //      let revertButton = UIBarButtonItem(title: "Revert", style: UIBarButtonItemStyle.Bordered, target: self, action: "revertFilter")
-      //      self.navigationItem.leftBarButtonItem = revertButton
-      //    } else {
-      //      self.navigationItem.leftBarButtonItem = nil
-      //    }
-      //
-      //    let composeButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Compose, target: self, action: "postToTwitter:")
-      //    self.navigationItem.rightBarButtonItem = composeButton
-      //    self.actionsButton.hidden = false
+    if self.hasChanged == true {
+      let revertButton = UIBarButtonItem(title: "Revert", style: .Bordered, target: self, action: "revertFilter")
+      self.navigationItem.leftBarButtonItem = revertButton
+    } else {
+      self.navigationItem.leftBarButtonItem = nil
+    }
+    
+    self.navigationItem.rightBarButtonItem = self.composeButton
+    self.actionsButton.hidden = false
   }
-
+  
   // MARK: - AUTO LAYOUT
   
   func setupConstraintsOnRootView(rootView: UIView, forViews views: [String : AnyObject]) {
+    // Actions Button
     let actionsButtonConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:[actionsButton]-20-|",
                                                                                  options: nil,
                                                                                  metrics: nil,
@@ -280,19 +282,37 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
                                                          multiplier: 1.0,
                                                            constant: 0.0)
     rootView.addConstraint(actionsButtonConstraintHorizontal)
+    actionsButton.setContentHuggingPriority(750, forAxis: .Vertical)
+    
+    // Image View
     let imageViewConstraintVertical = NSLayoutConstraint.constraintsWithVisualFormat("V:|-72-[imageView]-30-[actionsButton]",
                                                                              options: nil,
                                                                              metrics: nil,
                                                                                views: views)
     rootView.addConstraints(imageViewConstraintVertical)
-    let imageViewConstraintHorizontal = NSLayoutConstraint.constraintsWithVisualFormat("H:|-[imageView]-|",
-                                                                               options: nil,
-                                                                               metrics: nil,
-                                                                                 views: views)
-    rootView.addConstraints(imageViewConstraintHorizontal)
-  }
-  
-  func setupConstraintsOnCollectionView(rootView: UIView, forViews views: [String : AnyObject]) {
+    let imageView = views["imageView"] as UIView!
+    let imageViewConstraintHorizontal = NSLayoutConstraint(item: imageView,
+                                                      attribute: .CenterX,
+                                                      relatedBy: NSLayoutRelation.Equal,
+                                                         toItem: rootView,
+                                                      attribute: NSLayoutAttribute.CenterX,
+                                                     multiplier: 1.0,
+                                                       constant: 0.0)
+    rootView.addConstraint(imageViewConstraintHorizontal)
+    let imageViewConstraintHeight = NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView(300)]",
+                                                                           options: nil,
+                                                                           metrics: nil,
+                                                                             views: views)
+    rootView.addConstraints(imageViewConstraintHeight)
+    self.imageViewHeightConstraint = imageViewConstraintHeight.first as NSLayoutConstraint
+    let imageViewConstraintWidth = NSLayoutConstraint.constraintsWithVisualFormat("H:[imageView(300)]",
+                                                                          options: nil,
+                                                                          metrics: nil,
+                                                                            views: views)
+    rootView.addConstraints(imageViewConstraintWidth)
+    self.imageViewWidthConstraint = imageViewConstraintWidth.first as NSLayoutConstraint
+    
+    // Collection View
     let collectionViewConstraintHeight = NSLayoutConstraint.constraintsWithVisualFormat("V:[collectionView(100)]",
                                                                                 options: nil,
                                                                                 metrics: nil,
@@ -322,7 +342,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
   }
   
   func setupComposeButton() {
-    let composeButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "postToTwitter:")
+    composeButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "postToTwitter:")
     self.navigationItem.rightBarButtonItem = composeButton
   }
   
@@ -330,10 +350,6 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     let placeholderImage = UIImage(named: "placeholder")
     self.currentImage = placeholderImage
     self.imageView.image = placeholderImage
-    
-    // let composeButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Compose, target: self, action: "postToTwitter:")
-    // let postButton = UIBarButtonItem(title: nil, style: UIBarButtonItemStyle., target: self, action: "postToTwitter:")
-    // self.navigationItem.rightBarButtonItem = composeButton
     
     self.imageView.frame = CGRectMake(0, 0, 200, 200)
     self.imageView.layer.cornerRadius = self.imageView.frame.size.width / 10

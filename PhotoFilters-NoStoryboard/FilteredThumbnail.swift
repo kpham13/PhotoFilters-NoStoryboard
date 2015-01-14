@@ -11,16 +11,15 @@ import UIKit
 class FilteredThumbnail {
   
   var filterName : String
-  var originalImage : UIImage?
+  var filter : CIFilter?
+  var originalImage : UIImage
   var filteredImage : UIImage?
   var gpuContext : CIContext
   var imageQueue : NSOperationQueue
-  //var filter = CIFilter?
   
-  //init(name : String, thumbnail : UIImage, queue : NSOperationQueue, context : CIContext)
-  
-  init(filterName: String, context: CIContext, operationQueue: NSOperationQueue) {
-    self.filterName = filterName
+  init(name: String, originalThumbnail: UIImage, context: CIContext, operationQueue: NSOperationQueue) {
+    self.filterName = name
+    self.originalImage = originalThumbnail
     self.gpuContext = context
     self.imageQueue = operationQueue
   }

@@ -32,6 +32,7 @@
 		0AA36D251A67007E00C6BD53 /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AA36D241A67007E00C6BD53 /* placeholder.png */; };
 		0AA36D271A670FF800C6BD53 /* AVFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA36D261A670FF800C6BD53 /* AVFViewController.swift */; };
 		0AA36D291A6716AB00C6BD53 /* PhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA36D281A6716AB00C6BD53 /* PhotosViewController.swift */; };
+		0AA36D2B1A67260700C6BD53 /* GalleryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA36D2A1A67260700C6BD53 /* GalleryDelegate.swift */; };
 		0AC94BDA1A6482070004916F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BD91A6482070004916F /* AppDelegate.swift */; };
 		0AC94BDD1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BDB1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodeld */; };
 		0AC94BDF1A6482070004916F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC94BDE1A6482070004916F /* HomeViewController.swift */; };
@@ -77,6 +78,7 @@
 		0AA36D241A67007E00C6BD53 /* placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = placeholder.png; sourceTree = "<group>"; };
 		0AA36D261A670FF800C6BD53 /* AVFViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVFViewController.swift; sourceTree = "<group>"; };
 		0AA36D281A6716AB00C6BD53 /* PhotosViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotosViewController.swift; sourceTree = "<group>"; };
+		0AA36D2A1A67260700C6BD53 /* GalleryDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryDelegate.swift; sourceTree = "<group>"; };
 		0AC94BD41A6482070004916F /* PhotoFilters-NoStoryboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PhotoFilters-NoStoryboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AC94BD81A6482070004916F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AC94BD91A6482070004916F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				0AC94BFD1A64839C0004916F /* View */,
 				0AC94BFE1A6483A10004916F /* Controller */,
 				0AC94BD91A6482070004916F /* AppDelegate.swift */,
+				0AA36D2A1A67260700C6BD53 /* GalleryDelegate.swift */,
 				0AC94BE31A6482070004916F /* Images.xcassets */,
 				0A2238D41A65C0B300386CF4 /* App Icons */,
 				0A2238D91A65C0B300386CF4 /* Images */,
@@ -355,6 +358,7 @@
 				0AC94BDD1A6482070004916F /* PhotoFilters_NoStoryboard.xcdatamodeld in Sources */,
 				0AA36D221A65F50B00C6BD53 /* Filter.swift in Sources */,
 				0AC94BDA1A6482070004916F /* AppDelegate.swift in Sources */,
+				0AA36D2B1A67260700C6BD53 /* GalleryDelegate.swift in Sources */,
 				0A2238FB1A65CDF200386CF4 /* FilteredThumbnail.swift in Sources */,
 				0AA36D271A670FF800C6BD53 /* AVFViewController.swift in Sources */,
 				0AA36D291A6716AB00C6BD53 /* PhotosViewController.swift in Sources */,

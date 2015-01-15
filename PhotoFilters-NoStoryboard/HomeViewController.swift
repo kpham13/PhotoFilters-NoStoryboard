@@ -10,7 +10,10 @@ import UIKit
 import CoreData
 import Social
 
-class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
+//import CoreImage
+//import OpenGLES
+
+class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, GalleryDelegate {
 
   var filters = [Filter]()
   var thumbnails = [FilteredThumbnail]()
@@ -182,6 +185,16 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     self.exitFilterMode()
   }
   
+  // MARK: - GALLERY DELEGATE
+  
+  func didSelectImage(image: UIImage) {
+    self.currentImage = image
+    self.imageView.image = image
+    self.generateThumbnail()
+    self.resetFilterThumbnails()
+    self.collectionView.reloadData()
+  }
+  
   // MARK: - NAVIGATION
   
   func actionsButtonPressed(sender: UIButton) {
@@ -198,8 +211,15 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
       let imagePicker = UIImagePickerController()
       imagePicker.delegate = self
       imagePicker.allowsEditing = true
-      imagePicker.sourceType = UIImagePickerControllerSourceType.Camera
-      self.presentViewController(imagePicker, animated: true, completion: nil)
+      if UIImagePickerController.isSourceTypeAvailable(.Camera) {
+        imagePicker.sourceType = UIImagePickerControllerSourceType.Camera
+        self.presentViewController(imagePicker, animated: true, completion: nil)
+      } else {
+        let cameraAlertController = UIAlertController(title: "No camera available", message: "There is no camera available", preferredStyle: .Alert)
+        let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+        cameraAlertController.addAction(okAction)
+        self.presentViewController(cameraAlertController, animated: true, completion: nil)
+      }
     }
     let imagePickerAction = UIAlertAction(title: "ImagePicker Moments", style: .Default) { (action) -> Void in
       let imagePicker = UIImagePickerController()
@@ -210,6 +230,7 @@ class HomeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     let galleryAction = UIAlertAction(title: "HQ Gallery", style: UIAlertActionStyle.Default) { (action) -> Void in
       let galleryViewController = GalleryViewController()
+      galleryViewController.delegate = self
       self.navigationController?.pushViewController(galleryViewController, animated: true)
     }
     let photosAction = UIAlertAction(title: "Photos Framework", style: .Default) { (action) -> Void in
